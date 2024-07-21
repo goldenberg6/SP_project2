@@ -50,7 +50,7 @@ def validate_args():
         itr = 300
 
         try:
-            eps = sys.argv[3]
+            eps = sys.argv[2]
             eps = float(eps)
             if eps < 0:
                 exit()
@@ -80,13 +80,14 @@ def read_files(file_name_1, file_name_2):
 
 
 def centroids_init(k, data_points):
+    np.random.seed(1234)
     data_points_copy = data_points.copy()
     centroids_indices = []
     centroids = []
     relevant_indices = list(range(0, len(data_points)))
 
     # inserting first datat point
-    first_centroid_index = np.random.randint(0, len(data_points))
+    first_centroid_index = np.random.choice(np.arange(0, len(data_points)))
     centroids_indices.append(first_centroid_index)
     centroids.append(data_points_copy[first_centroid_index])
     relevant_indices.remove(first_centroid_index)
@@ -94,11 +95,7 @@ def centroids_init(k, data_points):
     for i in range(1, k):
         distances = calc_dists(centroids, data_points_copy, relevant_indices)
         sum_of_dists = sum(distances)
-        probabilities = [dist/sum_of_dists for dist in distances]
-        # print("DISTS")
-        # print(distances)
-        # print("PROBS")
-        # print(probabilities)
+        probabilities = [dist / sum_of_dists for dist in distances]
         new_centroid_index = np.random.choice(relevant_indices, p=probabilities)
         centroids_indices.append(new_centroid_index)
         centroids.append(data_points_copy[new_centroid_index])
@@ -107,25 +104,28 @@ def centroids_init(k, data_points):
     return centroids_indices
 
 
-
 def calc_dists(centroids, data_points_copy, relevant_indices):
     distances = []
     for data_point_index in relevant_indices:
-        dist = np.min([np.linalg.norm(np.array(data_points_copy[data_point_index]),centroid) for centroid in centroids])
+        # BUG?
+        dist = np.min([np.linalg.norm(np.array(data_points_copy[data_point_index]) - np.array(centroid)) for centroid in
+                       centroids])
         distances.append(dist)
     return distances
 
-# todo - validate k
-# todo - try except in main
-
 
 def main():
-    k, itr, eps, file_name_1, file_name_2 = validate_args()
-    data_points = read_files(file_name_1, file_name_2)
-    if k <= 1 or k >= len(data_points):
-        print("Invalid maximum iteration!")
+    try:
+        k, itr, eps, file_name_1, file_name_2 = validate_args()
+        data_points = read_files(file_name_1, file_name_2)
+        if k <= 1 or k >= len(data_points):
+            print("Invalid maximum iteration!")
+            exit()
+        init_centroids = [int(centroid) for centroid in centroids_init(k, data_points)]
+        print(init_centroids)
+    except:
+        print("An Error Has Occurred")
         exit()
-    print(centroids_init(k, data_points))
 
 
 if __name__ == '__main__':
