@@ -95,10 +95,10 @@ def centroids_init(k, data_points):
         distances = calc_dists(centroids, data_points_copy, relevant_indices)
         sum_of_dists = sum(distances)
         probabilities = [dist/sum_of_dists for dist in distances]
-        print("DISTS")
-        print(distances)
-        print("PROBS")
-        print(probabilities)
+        # print("DISTS")
+        # print(distances)
+        # print("PROBS")
+        # print(probabilities)
         new_centroid_index = np.random.choice(relevant_indices, p=probabilities)
         centroids_indices.append(new_centroid_index)
         centroids.append(data_points_copy[new_centroid_index])
@@ -111,7 +111,7 @@ def centroids_init(k, data_points):
 def calc_dists(centroids, data_points_copy, relevant_indices):
     distances = []
     for data_point_index in relevant_indices:
-        dist = np.min([np.linalg.norm(np.array(data_points_copy[data_point_index]),np.array(centroid)) for centroid in centroids])
+        dist = np.min([np.linalg.norm(np.array(data_points_copy[data_point_index]),centroid) for centroid in centroids])
         distances.append(dist)
     return distances
 
