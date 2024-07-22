@@ -107,7 +107,6 @@ def centroids_init(k, data_points):
 def calc_dists(centroids, data_points_copy, relevant_indices):
     distances = []
     for data_point_index in relevant_indices:
-        # BUG?
         dist = np.min([np.linalg.norm(np.array(data_points_copy[data_point_index]) - np.array(centroid)) for centroid in
                        centroids])
         distances.append(dist)
